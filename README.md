@@ -1,2 +1,1 @@
-# Maico-soft Tinta™
-[![Build](https://github.com/Frombull/Tinta/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Frombull/Tinta/actions)
+# Maico-soft Tinta™ [![Build](https://github.com/Frombull/Tinta/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Frombull/Tinta/actions)
