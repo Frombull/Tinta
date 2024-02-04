@@ -21,14 +21,24 @@ namespace Tinta {
         public Pen eraserPen = new Pen(Color.White, 3);
         public Pen outlinePen = new Pen(Color.Black, 1);
 
-        Bitmap bitmap;
+        readonly Bitmap bitmap;
 
         bool isMouseDown = false;
         bool drawBrushOutline = true;
         private Point mouseOffsetPos;
-        short toolIndex = 0;
         int pressedX, pressedY;
         int x, y;
+
+        public enum DrawingTool {
+            Paintbrush = 0,
+            Eraser = 1,
+            Bucket = 2,
+            Ellipse = 3,
+            Rectangle = 4,
+            Line = 5
+        }
+
+        private DrawingTool toolIndex = DrawingTool.Paintbrush;
 
         public Form1() {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
@@ -52,6 +62,7 @@ namespace Tinta {
             g.Clear(Color.White);
 
             Pic.BackgroundImage = bitmap;
+            Pic.MouseWheel += Pic_MouseWheel;
             Pic.Invalidate();
         }
 
@@ -60,13 +71,13 @@ namespace Tinta {
 
             if (isMouseDown) {
                 switch (toolIndex) {
-                    case 3:
+                    case DrawingTool.Ellipse:
                         g.DrawEllipse(pen, pressedX, pressedY, x - pressedX, y - pressedY);
                         break;
-                    case 4:
+                    case DrawingTool.Rectangle:
                         g.DrawRectangle(pen, pressedX, pressedY, x - pressedX, y - pressedY);
                         break;
-                    case 5:
+                    case DrawingTool.Line:
                         g.DrawLine(pen, pressedX, pressedY, x, y);
                         break;
                     default:
@@ -80,32 +91,46 @@ namespace Tinta {
                                 (float)PaintbrushSize.Value,
                                 (float)PaintbrushSize.Value);
             }
-        }   
+        }
+
+        private void Pic_MouseWheel(object sender, MouseEventArgs e) {
+            if (toolIndex == DrawingTool.Bucket)   // Bucket
+                return;
+           
+            if (e.Delta > 0 && PaintbrushSize.Value > PaintbrushSize.Minimum) {         // Scroll Up
+                PaintbrushSize.Value -= 1;
+                Pic.Refresh();
+            }
+            else if (e.Delta < 0 && PaintbrushSize.Value < PaintbrushSize.Maximum) {    // Scroll Down
+                PaintbrushSize.Value += 1;
+                Pic.Refresh();
+            }
+        }
 
         private void Pic_MouseDown(object sender, MouseEventArgs e) {
             isMouseDown = true;
             pressedX = e.X;
             pressedY = e.Y;
             last = e.Location;
+
+            // Deselect 'PaintbrushSize'
+            PaintbrushSize.Enabled = false;
+            PaintbrushSize.Enabled = true;
         }
 
         private void Pic_MouseMove(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
                 switch (toolIndex) {
-                    case 0:
+                    case DrawingTool.Paintbrush:
                         current = e.Location;
                         g.DrawLine(pen, last, current);
                         last = current;
                         break;
-                    case 1:
+                    case DrawingTool.Eraser:
                         current = e.Location;
                         g.DrawLine(eraserPen, last, current);
                         last = current;
                         break;
-                    case 2:
-                    case 3:
-                    case 4:
-                    case 5:
                     default:
                         break;
                 }
@@ -120,13 +145,13 @@ namespace Tinta {
         private void Pic_MouseUp(object sender, MouseEventArgs e) {
             isMouseDown = false;
             switch (toolIndex) {
-                case 3:
+                case DrawingTool.Ellipse:
                     g.DrawEllipse(pen, pressedX, pressedY, e.X - pressedX, e.Y - pressedY);
                     break;
-                case 4:
+                case DrawingTool.Rectangle:
                     g.DrawRectangle(pen, pressedX, pressedY, e.X - pressedX, e.Y - pressedY);
                     break;
-                case 5:
+                case DrawingTool.Line:
                     g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
                     break;
                 default: 
@@ -136,9 +161,8 @@ namespace Tinta {
 
         private void Pic_MouseClick(object sender, EventArgs e) {
             switch (toolIndex) {
-                case 2: // Bucket   //TODO: mexe aqui sla
-                    Point point = SetPoint(Pic, x, y);
-                    FloodFill(bitmap, point.X, point.Y, pen.Color);
+                case DrawingTool.Bucket:
+                    FloodFill(bitmap, x, y, pen.Color);
                     Pic.Refresh();
                     break;
                 default:
@@ -147,13 +171,17 @@ namespace Tinta {
         }
 
         private void Pic_MouseEnter(object sender, EventArgs e) {
-            drawBrushOutline = true;
-            Pic.Refresh();
+            if (toolIndex != DrawingTool.Bucket) {
+                drawBrushOutline = true;
+                Pic.Refresh();
+            }
         }
 
         private void Pic_MouseLeave(object sender, EventArgs e) {
-            drawBrushOutline = false;
-            Pic.Refresh();
+            if (toolIndex != DrawingTool.Bucket) {
+                drawBrushOutline = false;
+                Pic.Refresh();
+            }
         }
 
         private void TopPanel_MouseDown(object sender, MouseEventArgs e) {
@@ -215,36 +243,34 @@ namespace Tinta {
         }
         
         private void EraserButton_Click(object sender, EventArgs e) {
-            toolIndex = 1;
+            toolIndex = DrawingTool.Eraser;
             ColorBox.BackColor = eraserPen.Color;
             PaintbrushSize.Value = (decimal)eraserPen.Width;
         }
 
         private void BucketButton_Click(object sender, EventArgs e) {
-            toolIndex = 2;
+            toolIndex = DrawingTool.Bucket;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            drawBrushOutline = false;
         }
 
         private void EllipseButton_Click(object sender, EventArgs e) {
-            toolIndex = 3;
+            toolIndex = DrawingTool.Ellipse;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
-
         }
 
         private void RectangleButton_Click(object sender, EventArgs e) {
-            toolIndex = 4;
+            toolIndex = DrawingTool.Rectangle;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
-
         }
 
         private void LineButton_Click(object sender, EventArgs e) {
-            toolIndex = 5;
+            toolIndex = DrawingTool.Line;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
-
         }
 
         private void PaintbrushSize_KeyUp(object sender, KeyEventArgs e) { // TODO: deselect box
@@ -253,21 +279,21 @@ namespace Tinta {
 
         private void PaintbrushSize_ValueChanged(object sender, EventArgs e) {
             switch (toolIndex) {
-                case 0:
+                case DrawingTool.Paintbrush:
                     pen.Width = (float)PaintbrushSize.Value;
                     break;
-                case 1:
+                case DrawingTool.Eraser:
                     eraserPen.Width = (float)PaintbrushSize.Value;
                     break;
-                case 2: // Bucket
+                case DrawingTool.Bucket:
                     break;
-                case 3:
+                case DrawingTool.Ellipse:
                     pen.Width = (float)PaintbrushSize.Value;
                     break;
-                case 4:
+                case DrawingTool.Rectangle:
                     pen.Width = (float)PaintbrushSize.Value;
                     break;
-                case 5:
+                case DrawingTool.Line:
                     break;
                 default:
                     break;
@@ -275,47 +301,45 @@ namespace Tinta {
         }
 
         private void ColorBox_Click(object sender, EventArgs e) { //TODO: Set starting position
-            ColorDialog cd = new ColorDialog();
+            ColorDialog cd = new();
             if (cd.ShowDialog() == DialogResult.OK) {
                 pen.Color = cd.Color;
                 ColorBox.BackColor = cd.Color;
             }
         }
 
-        private Point SetPoint(PictureBox Pic, int x, int y) {
-            float pointX = 1f * Pic.Width / Pic.Width;
-            float pointY = 1f * Pic.Height / Pic.Height;
-            return new Point((int)(x * pointX), (int)(y * pointY));
-        }
-
-        private void Validate(Bitmap bitmap, Stack<Point> pixel, int x, int y, Color oldColor, Color newColor) {
-            Color cx = bitmap.GetPixel(x, y);
-
-            if (cx == oldColor) {
-                pixel.Push(new Point(x, y));
-                bitmap.SetPixel(x, y, newColor);
-            }
-        }
-
-        private void FloodFill(Bitmap bitmap, int x, int y, Color newColor) {
+        private static void FloodFill(Bitmap bitmap, int x, int y, Color newColor) {
             Color oldColor = bitmap.GetPixel(x, y);
-            Stack<Point> pixel = new Stack<Point>();
-            pixel.Push(new Point(x, y));
 
-            if (oldColor.Equals(newColor))
+            if (oldColor.ToArgb() == newColor.ToArgb())
                 return;
 
+            Queue<Point> pixels = new Queue<Point>();
+            pixels.Enqueue(new Point(x, y));
             bitmap.SetPixel(x, y, newColor);
 
-            while (pixel.Count > 0) {
-                Point point = pixel.Pop();
-                if (point.X > 0 && point.Y > 0 && point.X < bitmap.Width - 1 && point.Y < bitmap.Height - 1) {
-                    Validate(bitmap, pixel, point.X - 1, point.Y, oldColor, newColor);
-                    Validate(bitmap, pixel, point.X, point.Y - 1, oldColor, newColor);
-                    Validate(bitmap, pixel, point.X + 1, point.Y, oldColor, newColor);
-                    Validate(bitmap, pixel, point.X, point.Y + 1, oldColor, newColor);
+            while (pixels.Count > 0) {
+                Point pixel = pixels.Dequeue();
+                int px = pixel.X;
+                int py = pixel.Y;
+
+                if (px > 0 && py > 0 && px < bitmap.Width - 1 && py < bitmap.Height - 1) {
+                    Validate(bitmap, pixels, px - 1, py, oldColor, newColor);
+                    Validate(bitmap, pixels, px, py - 1, oldColor, newColor);
+                    Validate(bitmap, pixels, px + 1, py, oldColor, newColor);
+                    Validate(bitmap, pixels, px, py + 1, oldColor, newColor);
                 }
             }
+        }
+
+        private static void Validate(Bitmap bitmap, Queue<Point> pixels, int x, int y, Color oldColor, Color newColor) {
+            Color currentColor = bitmap.GetPixel(x, y);
+
+            if (currentColor != oldColor)
+                return;
+
+            pixels.Enqueue(new Point(x, y));
+            bitmap.SetPixel(x, y, newColor);
         }
     }
 }

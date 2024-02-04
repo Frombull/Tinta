@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows8.0</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Maico-soft tinta™</AssemblyName>
     <PublishUrl>publish\</PublishUrl>
@@ -25,7 +25,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Tinta.ico</ApplicationIcon>
-    <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <StartupObject>Tinta.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Tinta.ico" />
