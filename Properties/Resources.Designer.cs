@@ -73,26 +73,6 @@ namespace Tinta.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Bia_square {
-            get {
-                object obj = ResourceManager.GetObject("Bia_square", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap bocchi_glitch_fast {
-            get {
-                object obj = ResourceManager.GetObject("bocchi glitch fast", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap Brush {
             get {
                 object obj = ResourceManager.GetObject("Brush", resourceCulture);
@@ -106,16 +86,6 @@ namespace Tinta.Properties {
         internal static System.Drawing.Bitmap Bucket {
             get {
                 object obj = ResourceManager.GetObject("Bucket", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap corujo {
-            get {
-                object obj = ResourceManager.GetObject("corujo", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -166,16 +136,6 @@ namespace Tinta.Properties {
         internal static System.Drawing.Bitmap Line {
             get {
                 object obj = ResourceManager.GetObject("Line", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap OCc4F3S1 {
-            get {
-                object obj = ResourceManager.GetObject("OCc4F3S1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

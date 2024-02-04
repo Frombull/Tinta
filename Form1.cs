@@ -184,7 +184,7 @@ namespace Tinta {
         
         private void ClearButton_Click(object sender, EventArgs e) {
             var confirmResult = MessageBox.Show("Clear canvas?", "Maico-soft Tinta™",
-                                     MessageBoxButtons.YesNo);
+                                     MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (confirmResult == DialogResult.Yes) {
                 g.Clear(Color.White);
@@ -194,7 +194,7 @@ namespace Tinta {
         
         private void ExitButton_Click(object sender, EventArgs e) {
             var confirmResult = MessageBox.Show("Save changes before quitting?", "Maico-soft Tinta™",
-                         MessageBoxButtons.YesNoCancel);
+                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
             if (confirmResult == DialogResult.Yes) {
                 SaveButton_Click(sender, e);
