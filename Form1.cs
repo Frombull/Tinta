@@ -51,12 +51,12 @@ namespace Tinta {
             g = Pic.CreateGraphics();
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            pen.Width = (float)PaintbrushSize.Value;
+            pen.Width = (float)SizeSelector.Value;
             pen.SetLineCap(System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.DashCap.Round);
 
-            eraserPen.Width = (float)PaintbrushSize.Value;
+            eraserPen.Width = (float)SizeSelector.Value;
             eraserPen.SetLineCap(System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.DashCap.Round);
@@ -92,10 +92,10 @@ namespace Tinta {
             }
             if (drawBrushOutline) {
                 g.DrawEllipse(outlinePen,
-                                x - ((float)PaintbrushSize.Value / 2.0f),
-                                y - ((float)PaintbrushSize.Value / 2.0f),
-                                (float)PaintbrushSize.Value,
-                                (float)PaintbrushSize.Value);
+                                x - ((float)SizeSelector.Value / 2.0f),
+                                y - ((float)SizeSelector.Value / 2.0f),
+                                (float)SizeSelector.Value,
+                                (float)SizeSelector.Value);
             }
         }
 
@@ -103,12 +103,12 @@ namespace Tinta {
             if (selectedTool == DrawingTool.Bucket || selectedTool == DrawingTool.ColorPicker || selectedTool == DrawingTool.Pencil)
                 return;
 
-            if (e.Delta > 0 && PaintbrushSize.Value > PaintbrushSize.Minimum) {         // Scroll Up
-                PaintbrushSize.Value -= 1;
+            if (e.Delta > 0 && SizeSelector.Value > SizeSelector.Minimum) {         // Scroll Up
+                SizeSelector.Value -= 1;
                 Pic.Refresh();
             }
-            else if (e.Delta < 0 && PaintbrushSize.Value < PaintbrushSize.Maximum) {    // Scroll Down
-                PaintbrushSize.Value += 1;
+            else if (e.Delta < 0 && SizeSelector.Value < SizeSelector.Maximum) {    // Scroll Down
+                SizeSelector.Value += 1;
                 Pic.Refresh();
             }
         }
@@ -119,9 +119,9 @@ namespace Tinta {
             pressedY = e.Y;
             last = e.Location;
 
-            // Deselect 'PaintbrushSize'
-            PaintbrushSize.Enabled = !PaintbrushSize.Enabled;
-            PaintbrushSize.Enabled = !PaintbrushSize.Enabled;
+            // Deselect 'SizeSelector'
+            SizeSelector.Enabled = !SizeSelector.Enabled;
+            SizeSelector.Enabled = !SizeSelector.Enabled;
         }
 
         private void Pic_MouseMove(object sender, MouseEventArgs e) {
@@ -151,8 +151,6 @@ namespace Tinta {
                         break;
                 }
             }
-
-
 
             x = e.X;
             y = e.Y;
@@ -275,10 +273,10 @@ namespace Tinta {
         }
 
         private void PaintBrushButton_Click(object sender, EventArgs e) {
-            selectedTool = 0;
+            selectedTool = DrawingTool.Paintbrush;
             ColorBox.BackColor = pen.Color;
-            PaintbrushSize.Value = (decimal)pen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -286,8 +284,8 @@ namespace Tinta {
         private void EraserButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Eraser;
             ColorBox.BackColor = eraserPen.Color;
-            PaintbrushSize.Value = (decimal)eraserPen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)eraserPen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -295,8 +293,8 @@ namespace Tinta {
         private void BucketButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Bucket;
             ColorBox.BackColor = pen.Color;
-            PaintbrushSize.Value = (decimal)pen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = false;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -304,8 +302,8 @@ namespace Tinta {
         private void EllipseButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Ellipse;
             ColorBox.BackColor = pen.Color;
-            PaintbrushSize.Value = (decimal)pen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -313,8 +311,8 @@ namespace Tinta {
         private void RectangleButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Rectangle;
             ColorBox.BackColor = pen.Color;
-            PaintbrushSize.Value = (decimal)pen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -322,8 +320,8 @@ namespace Tinta {
         private void LineButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Line;
             ColorBox.BackColor = pen.Color;
-            PaintbrushSize.Value = (decimal)pen.Width;
-            PaintbrushSize.Enabled = true;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
         }
@@ -336,34 +334,35 @@ namespace Tinta {
 
         private void PencilButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Pencil;
+            ColorBox.BackColor = pencil.Color;
             drawBrushOutline = false;
             wasDrawingBrushOutline = drawBrushOutline;
-            PaintbrushSize.Value = (decimal)pencil.Width;
-            PaintbrushSize.Enabled = false;
+            SizeSelector.Value = (decimal)pencil.Width;
+            SizeSelector.Enabled = false;
         }
 
-        private void PaintbrushSize_KeyUp(object sender, KeyEventArgs e) {
-            PaintbrushSize_ValueChanged(sender, e);
+        private void SizeSelector_KeyUp(object sender, KeyEventArgs e) {
+            SizeSelector_ValueChanged(sender, e);
         }
 
-        private void PaintbrushSize_ValueChanged(object sender, EventArgs e) {
+        private void SizeSelector_ValueChanged(object sender, EventArgs e) {
             switch (selectedTool) {
                 case DrawingTool.Paintbrush:
-                    pen.Width = (float)PaintbrushSize.Value;
+                    pen.Width = (float)SizeSelector.Value;
                     break;
                 case DrawingTool.Eraser:
-                    eraserPen.Width = (float)PaintbrushSize.Value;
+                    eraserPen.Width = (float)SizeSelector.Value;
                     break;
                 case DrawingTool.Bucket:
                     break;
                 case DrawingTool.Ellipse:
-                    pen.Width = (float)PaintbrushSize.Value;
+                    pen.Width = (float)SizeSelector.Value;
                     break;
                 case DrawingTool.Rectangle:
-                    pen.Width = (float)PaintbrushSize.Value;
+                    pen.Width = (float)SizeSelector.Value;
                     break;
                 case DrawingTool.Line:
-                    pen.Width = (float)PaintbrushSize.Value;
+                    pen.Width = (float)SizeSelector.Value;
                     break;
                 case DrawingTool.ColorPicker:
                     break;
@@ -376,6 +375,7 @@ namespace Tinta {
             ColorDialog cd = new();
             if (cd.ShowDialog() == DialogResult.OK) {
                 pen.Color = cd.Color;
+                pencil.Color = cd.Color;
                 ColorBox.BackColor = cd.Color;
             }
         }
@@ -414,6 +414,9 @@ namespace Tinta {
             bitmap.SetPixel(x, y, newColor);
         }
 
-
+        private void ColorBox_BackColorChanged(object sender, EventArgs e) {
+        //    pencil.Color = ColorBox.BackColor;
+        //    pen.Color = ColorBox.BackColor;
+        }
     }
 }
