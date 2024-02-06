@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -12,33 +13,37 @@ using System.Windows.Forms;
 
 namespace Tinta {
     public partial class Form1 : Form {
-        public Point current = new Point();
         public Point last = new Point();
+        public Point current = new Point();
 
         public Graphics g;
 
-        public Pen pen = new Pen(Color.Black, 3);
-        public Pen eraserPen = new Pen(Color.White, 3);
-        public Pen outlinePen = new Pen(Color.Black, 1);
+        private Pen pen = new Pen(Color.Black, 1);
+        private Pen pencil = new Pen(Color.Black, 1);
+        private Pen eraserPen = new Pen(Color.White, 1);
+        private Pen outlinePen = new Pen(Color.Black, 1);
 
-        readonly Bitmap bitmap;
+        private readonly Bitmap bitmap;
 
-        bool isMouseDown = false;
+        Point mouseOffsetPos;
         bool drawBrushOutline = true;
-        private Point mouseOffsetPos;
+        bool wasDrawingBrushOutline = true;
+        bool isMouseDown = false;
         int pressedX, pressedY;
         int x, y;
 
         public enum DrawingTool {
-            Paintbrush = 0,
-            Eraser = 1,
-            Bucket = 2,
-            Ellipse = 3,
-            Rectangle = 4,
-            Line = 5
+            Paintbrush,
+            Eraser,
+            Bucket,
+            Ellipse,
+            Rectangle,
+            Line,
+            ColorPicker,
+            Pencil
         }
 
-        private DrawingTool toolIndex = DrawingTool.Paintbrush;
+        private DrawingTool selectedTool = DrawingTool.Paintbrush;
 
         public Form1() {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
@@ -56,6 +61,7 @@ namespace Tinta {
                            System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.DashCap.Round);
 
+
             bitmap = new Bitmap(Pic.Width, Pic.Height);
 
             g = Graphics.FromImage(bitmap);
@@ -66,16 +72,16 @@ namespace Tinta {
             Pic.Invalidate();
         }
 
-        private void Pic_Paint(object sender, PaintEventArgs e) {
-            Graphics g = e.Graphics;
+        private void Pic_Paint(object sender, PaintEventArgs p) {
+            Graphics g = p.Graphics;
 
             if (isMouseDown) {
-                switch (toolIndex) {
+                switch (selectedTool) {
                     case DrawingTool.Ellipse:
                         g.DrawEllipse(pen, pressedX, pressedY, x - pressedX, y - pressedY);
                         break;
                     case DrawingTool.Rectangle:
-                        g.DrawRectangle(pen, pressedX, pressedY, x - pressedX, y - pressedY);
+                        g.DrawRectangle(pen, Math.Min(pressedX, x), Math.Min(pressedY, y), Math.Abs(x - pressedX), Math.Abs(y - pressedY));
                         break;
                     case DrawingTool.Line:
                         g.DrawLine(pen, pressedX, pressedY, x, y);
@@ -94,9 +100,9 @@ namespace Tinta {
         }
 
         private void Pic_MouseWheel(object sender, MouseEventArgs e) {
-            if (toolIndex == DrawingTool.Bucket)   // Bucket
+            if (selectedTool == DrawingTool.Bucket || selectedTool == DrawingTool.ColorPicker || selectedTool == DrawingTool.Pencil)
                 return;
-           
+
             if (e.Delta > 0 && PaintbrushSize.Value > PaintbrushSize.Minimum) {         // Scroll Up
                 PaintbrushSize.Value -= 1;
                 Pic.Refresh();
@@ -114,13 +120,13 @@ namespace Tinta {
             last = e.Location;
 
             // Deselect 'PaintbrushSize'
-            PaintbrushSize.Enabled = false;
-            PaintbrushSize.Enabled = true;
+            PaintbrushSize.Enabled = !PaintbrushSize.Enabled;
+            PaintbrushSize.Enabled = !PaintbrushSize.Enabled;
         }
 
         private void Pic_MouseMove(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left) {
-                switch (toolIndex) {
+                switch (selectedTool) {
                     case DrawingTool.Paintbrush:
                         current = e.Location;
                         g.DrawLine(pen, last, current);
@@ -131,10 +137,22 @@ namespace Tinta {
                         g.DrawLine(eraserPen, last, current);
                         last = current;
                         break;
+                    case DrawingTool.Pencil:
+                        current = e.Location;
+                        g.DrawLine(pencil, last, current);
+                        last = current;
+                        break;
+                    case DrawingTool.ColorPicker:
+                        if (x < Pic.Width && x > 0 && y < Pic.Height && y > 0) {
+                            ColorBox.BackColor = bitmap.GetPixel(x, y);
+                        }
+                        break;
                     default:
                         break;
                 }
             }
+
+
 
             x = e.X;
             y = e.Y;
@@ -144,23 +162,31 @@ namespace Tinta {
 
         private void Pic_MouseUp(object sender, MouseEventArgs e) {
             isMouseDown = false;
-            switch (toolIndex) {
+            switch (selectedTool) {
                 case DrawingTool.Ellipse:
                     g.DrawEllipse(pen, pressedX, pressedY, e.X - pressedX, e.Y - pressedY);
                     break;
                 case DrawingTool.Rectangle:
-                    g.DrawRectangle(pen, pressedX, pressedY, e.X - pressedX, e.Y - pressedY);
+                    g.DrawRectangle(pen, Math.Min(pressedX, x), Math.Min(pressedY, y), Math.Abs(x - pressedX), Math.Abs(y - pressedY));
                     break;
                 case DrawingTool.Line:
                     g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
                     break;
-                default: 
+                case DrawingTool.ColorPicker:
+                    if (x < Pic.Width && x > 0 && y < Pic.Height && y > 0) {
+                        pen.Color = bitmap.GetPixel(x, y);
+                        selectedTool = DrawingTool.Paintbrush;
+                        drawBrushOutline = true;
+                        wasDrawingBrushOutline = drawBrushOutline;
+                    }
+                    break;
+                default:
                     break;
             }
         }
 
         private void Pic_MouseClick(object sender, EventArgs e) {
-            switch (toolIndex) {
+            switch (selectedTool) {
                 case DrawingTool.Bucket:
                     FloodFill(bitmap, x, y, pen.Color);
                     Pic.Refresh();
@@ -171,17 +197,19 @@ namespace Tinta {
         }
 
         private void Pic_MouseEnter(object sender, EventArgs e) {
-            if (toolIndex != DrawingTool.Bucket) {
+            if (wasDrawingBrushOutline) {
                 drawBrushOutline = true;
-                Pic.Refresh();
             }
+            else {
+                drawBrushOutline = false;
+            }
+            Pic.Refresh();
         }
 
         private void Pic_MouseLeave(object sender, EventArgs e) {
-            if (toolIndex != DrawingTool.Bucket) {
-                drawBrushOutline = false;
-                Pic.Refresh();
-            }
+            wasDrawingBrushOutline = drawBrushOutline;
+            drawBrushOutline = false;
+            Pic.Refresh();
         }
 
         private void TopPanel_MouseDown(object sender, MouseEventArgs e) {
@@ -198,18 +226,28 @@ namespace Tinta {
             }
         }
 
-        private void SaveButton_Click(object sender, EventArgs e) { //TODO: make it have a default name "unknown.png" or something
+        private void SaveButton_Click(object sender, EventArgs e) {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
 
-            saveFileDialog.Filter = "Png Files (*png) | *.png";
+            saveFileDialog.FileName = "Drawing";
+
+            saveFileDialog.Filter = "PNG|*.png|JPEG|*.jpg";
             saveFileDialog.DefaultExt = "png";
             saveFileDialog.AddExtension = true;
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK) {
-                bitmap.Save(saveFileDialog.FileName, System.Drawing.Imaging.ImageFormat.Png);
+                // Get selected image format
+                ImageFormat imageFormat = saveFileDialog.FilterIndex switch {
+                    1 => ImageFormat.Jpeg,
+                    2 => ImageFormat.Png,
+                    _ => ImageFormat.Png,
+                };
+
+                // Save image with selected format
+                bitmap.Save(saveFileDialog.FileName, imageFormat);
             }
         }
-        
+
         private void ClearButton_Click(object sender, EventArgs e) {
             var confirmResult = MessageBox.Show("Clear canvas?", "Maico-soft Tinta™",
                                      MessageBoxButtons.YesNo, MessageBoxIcon.Information);
@@ -219,7 +257,7 @@ namespace Tinta {
                 Pic.Invalidate();
             }
         }
-        
+
         private void ExitButton_Click(object sender, EventArgs e) {
             var confirmResult = MessageBox.Show("Save changes before quitting?", "Maico-soft Tinta™",
                          MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
@@ -235,50 +273,81 @@ namespace Tinta {
                 return;
             }
         }
-        
+
         private void PaintBrushButton_Click(object sender, EventArgs e) {
-            toolIndex = 0;
+            selectedTool = 0;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            PaintbrushSize.Enabled = true;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
-        
+
         private void EraserButton_Click(object sender, EventArgs e) {
-            toolIndex = DrawingTool.Eraser;
+            selectedTool = DrawingTool.Eraser;
             ColorBox.BackColor = eraserPen.Color;
             PaintbrushSize.Value = (decimal)eraserPen.Width;
+            PaintbrushSize.Enabled = true;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
 
         private void BucketButton_Click(object sender, EventArgs e) {
-            toolIndex = DrawingTool.Bucket;
+            selectedTool = DrawingTool.Bucket;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            PaintbrushSize.Enabled = true;
             drawBrushOutline = false;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
 
         private void EllipseButton_Click(object sender, EventArgs e) {
-            toolIndex = DrawingTool.Ellipse;
+            selectedTool = DrawingTool.Ellipse;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            PaintbrushSize.Enabled = true;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
 
         private void RectangleButton_Click(object sender, EventArgs e) {
-            toolIndex = DrawingTool.Rectangle;
+            selectedTool = DrawingTool.Rectangle;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            PaintbrushSize.Enabled = true;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
 
         private void LineButton_Click(object sender, EventArgs e) {
-            toolIndex = DrawingTool.Line;
+            selectedTool = DrawingTool.Line;
             ColorBox.BackColor = pen.Color;
             PaintbrushSize.Value = (decimal)pen.Width;
+            PaintbrushSize.Enabled = true;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
         }
 
-        private void PaintbrushSize_KeyUp(object sender, KeyEventArgs e) { // TODO: deselect box
+        private void ColorPickerButton_Click(object sender, EventArgs e) {
+            selectedTool = DrawingTool.ColorPicker;
+            drawBrushOutline = false;
+            wasDrawingBrushOutline = drawBrushOutline;
+        }
+
+        private void PencilButton_Click(object sender, EventArgs e) {
+            selectedTool = DrawingTool.Pencil;
+            drawBrushOutline = false;
+            wasDrawingBrushOutline = drawBrushOutline;
+            PaintbrushSize.Value = (decimal)pencil.Width;
+            PaintbrushSize.Enabled = false;
+        }
+
+        private void PaintbrushSize_KeyUp(object sender, KeyEventArgs e) {
             PaintbrushSize_ValueChanged(sender, e);
         }
 
         private void PaintbrushSize_ValueChanged(object sender, EventArgs e) {
-            switch (toolIndex) {
+            switch (selectedTool) {
                 case DrawingTool.Paintbrush:
                     pen.Width = (float)PaintbrushSize.Value;
                     break;
@@ -294,6 +363,9 @@ namespace Tinta {
                     pen.Width = (float)PaintbrushSize.Value;
                     break;
                 case DrawingTool.Line:
+                    pen.Width = (float)PaintbrushSize.Value;
+                    break;
+                case DrawingTool.ColorPicker:
                     break;
                 default:
                     break;
@@ -341,5 +413,7 @@ namespace Tinta {
             pixels.Enqueue(new Point(x, y));
             bitmap.SetPixel(x, y, newColor);
         }
+
+
     }
 }
