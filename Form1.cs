@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
+using System;
 
 namespace Tinta {
     public partial class Form1 : Form {
@@ -18,10 +11,10 @@ namespace Tinta {
 
         public Graphics g;
 
-        private Pen pen = new Pen(Color.Black, 1);
-        private Pen pencil = new Pen(Color.Black, 1);
-        private Pen eraserPen = new Pen(Color.White, 1);
-        private Pen outlinePen = new Pen(Color.Black, 1);
+        static private Pen pen = new Pen(Color.Black, 1);
+        static private Pen pencil = new Pen(Color.Black, 1);
+        static private Pen eraserPen = new Pen(Color.White, 1);
+        static private Pen outlinePen = new Pen(Color.Black, 1);
 
         private readonly Bitmap bitmap;
 
@@ -31,8 +24,11 @@ namespace Tinta {
         bool isMouseDown = false;
         int pressedX, pressedY;
         int x, y;
+        bool drawingPolygon = false;
+        int PolygonX = 0, PolygonY = 0;
 
         public enum DrawingTool {
+            Pencil,
             Paintbrush,
             Eraser,
             Bucket,
@@ -40,10 +36,10 @@ namespace Tinta {
             Rectangle,
             Line,
             ColorPicker,
-            Pencil
+            Polygon
         }
 
-        private DrawingTool selectedTool = DrawingTool.Paintbrush;
+        static private DrawingTool selectedTool = DrawingTool.Paintbrush;
 
         public Form1() {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
@@ -85,6 +81,12 @@ namespace Tinta {
                         break;
                     case DrawingTool.Line:
                         g.DrawLine(pen, pressedX, pressedY, x, y);
+                        break;
+                    case DrawingTool.Polygon:
+                        if (drawingPolygon)
+                            g.DrawLine(pen, PolygonX, PolygonY, x, y);
+                        else
+                            g.DrawLine(pen, pressedX, pressedY, x, y);
                         break;
                     default:
                         break;
@@ -169,6 +171,17 @@ namespace Tinta {
                     break;
                 case DrawingTool.Line:
                     g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
+                    break;
+                case DrawingTool.Polygon:
+                    if (drawingPolygon) {
+                        g.DrawLine(pen, PolygonX, PolygonY, e.X, e.Y);
+                    }
+                    else {
+                        g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
+                        drawingPolygon = true;
+                    }
+                    PolygonX = e.X;
+                    PolygonY = e.Y;
                     break;
                 case DrawingTool.ColorPicker:
                     if (x < Pic.Width && x > 0 && y < Pic.Height && y > 0) {
@@ -334,11 +347,21 @@ namespace Tinta {
 
         private void PencilButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Pencil;
-            ColorBox.BackColor = pencil.Color;
+            ColorBox.BackColor = pen.Color;
             drawBrushOutline = false;
             wasDrawingBrushOutline = drawBrushOutline;
             SizeSelector.Value = (decimal)pencil.Width;
             SizeSelector.Enabled = false;
+        }
+
+        private void PolygonButton_Click(object sender, EventArgs e) {
+            selectedTool = DrawingTool.Polygon;
+            ColorBox.BackColor = pen.Color;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
+            drawingPolygon = false;
         }
 
         private void SizeSelector_KeyUp(object sender, KeyEventArgs e) {
@@ -347,24 +370,14 @@ namespace Tinta {
 
         private void SizeSelector_ValueChanged(object sender, EventArgs e) {
             switch (selectedTool) {
-                case DrawingTool.Paintbrush:
-                    pen.Width = (float)SizeSelector.Value;
-                    break;
                 case DrawingTool.Eraser:
                     eraserPen.Width = (float)SizeSelector.Value;
                     break;
-                case DrawingTool.Bucket:
-                    break;
+                case DrawingTool.Paintbrush:
                 case DrawingTool.Ellipse:
-                    pen.Width = (float)SizeSelector.Value;
-                    break;
                 case DrawingTool.Rectangle:
-                    pen.Width = (float)SizeSelector.Value;
-                    break;
                 case DrawingTool.Line:
                     pen.Width = (float)SizeSelector.Value;
-                    break;
-                case DrawingTool.ColorPicker:
                     break;
                 default:
                     break;
@@ -372,6 +385,9 @@ namespace Tinta {
         }
 
         private void ColorBox_Click(object sender, EventArgs e) { //TODO: Set starting position
+            if (selectedTool == DrawingTool.Eraser)
+                return;
+
             ColorDialog cd = new();
             if (cd.ShowDialog() == DialogResult.OK) {
                 pen.Color = cd.Color;
@@ -412,11 +428,6 @@ namespace Tinta {
 
             pixels.Enqueue(new Point(x, y));
             bitmap.SetPixel(x, y, newColor);
-        }
-
-        private void ColorBox_BackColorChanged(object sender, EventArgs e) {
-        //    pencil.Color = ColorBox.BackColor;
-        //    pen.Color = ColorBox.BackColor;
         }
     }
 }

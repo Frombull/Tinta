@@ -1,0 +1,56 @@
+{
+  "globalConfigs": {
+    "selectedColor": "255, 255, 255, 255",
+    "selectedSize": 12
+  },
+  "brushes": [
+    {
+      "name": "Pencil",
+      "drawOutline": false,
+      "canResize": false,
+      "canChangeColor": true
+    },
+    {
+      "name":"PaintBrush",
+      "drawOutline": true,
+      "canResize": true,
+      "canChangeColor": true
+    },
+    {
+      "name":"Eraser",
+      "drawOutline": true,
+      "canResize": true,
+      "canChangeColor": false
+    },
+    {
+      "name":"Bucket",
+      "drawOutline":false,
+      "canResize":false,
+      "canChangeColor": true
+    },
+    {
+      "name": "ColorPicker",
+      "drawOutline": false,
+      "canResize": false,
+      "canChangeColor": false
+    },
+    {
+      "name": "Ellipse",
+      "drawOutline": true,
+      "canResize": true,
+      "canChangeColor": true
+    },
+    {
+      "name": "Rectangle",
+      "drawOutline": true,
+      "canResize": true,
+      "canChangeColor": true
+    },
+    {
+      "name": "Line",
+      "drawOutline": true,
+      "canResize": true,
+      "canChangeColor": true
+    }
+  ]
+}

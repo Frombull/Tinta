@@ -30,6 +30,7 @@
             ClearButton = new System.Windows.Forms.Button();
             SaveButton = new System.Windows.Forms.Button();
             ToolboxPanel = new System.Windows.Forms.Panel();
+            PolygonButton = new System.Windows.Forms.PictureBox();
             AnimegirlPictureBox = new System.Windows.Forms.PictureBox();
             PencilButton = new System.Windows.Forms.PictureBox();
             ColorPickerButton = new System.Windows.Forms.PictureBox();
@@ -44,6 +45,7 @@
             Pic = new System.Windows.Forms.PictureBox();
             TopPanel.SuspendLayout();
             ToolboxPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)PolygonButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PencilButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ColorPickerButton).BeginInit();
@@ -127,6 +129,7 @@
             // ToolboxPanel
             // 
             ToolboxPanel.BackColor = System.Drawing.Color.Thistle;
+            ToolboxPanel.Controls.Add(PolygonButton);
             ToolboxPanel.Controls.Add(AnimegirlPictureBox);
             ToolboxPanel.Controls.Add(PencilButton);
             ToolboxPanel.Controls.Add(ColorPickerButton);
@@ -145,6 +148,19 @@
             ToolboxPanel.Size = new System.Drawing.Size(80, 488);
             ToolboxPanel.TabIndex = 0;
             // 
+            // PolygonButton
+            // 
+            PolygonButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            PolygonButton.Image = (System.Drawing.Image)resources.GetObject("PolygonButton.Image");
+            PolygonButton.Location = new System.Drawing.Point(44, 120);
+            PolygonButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            PolygonButton.Name = "PolygonButton";
+            PolygonButton.Size = new System.Drawing.Size(32, 32);
+            PolygonButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            PolygonButton.TabIndex = 7;
+            PolygonButton.TabStop = false;
+            PolygonButton.Click += PolygonButton_Click;
+            // 
             // AnimegirlPictureBox
             // 
             AnimegirlPictureBox.BackColor = System.Drawing.Color.Transparent;
@@ -160,7 +176,7 @@
             // 
             PencilButton.Cursor = System.Windows.Forms.Cursors.Hand;
             PencilButton.Image = Properties.Resources.Pencil;
-            PencilButton.Location = new System.Drawing.Point(44, 120);
+            PencilButton.Location = new System.Drawing.Point(4, 6);
             PencilButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PencilButton.Name = "PencilButton";
             PencilButton.Size = new System.Drawing.Size(32, 32);
@@ -173,7 +189,7 @@
             // 
             ColorPickerButton.Cursor = System.Windows.Forms.Cursors.Hand;
             ColorPickerButton.Image = Properties.Resources.ColorPicker;
-            ColorPickerButton.Location = new System.Drawing.Point(44, 44);
+            ColorPickerButton.Location = new System.Drawing.Point(4, 44);
             ColorPickerButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ColorPickerButton.Name = "ColorPickerButton";
             ColorPickerButton.Size = new System.Drawing.Size(32, 32);
@@ -186,7 +202,7 @@
             // 
             PaintBrushButton.Cursor = System.Windows.Forms.Cursors.Hand;
             PaintBrushButton.Image = Properties.Resources.Brush;
-            PaintBrushButton.Location = new System.Drawing.Point(4, 6);
+            PaintBrushButton.Location = new System.Drawing.Point(44, 6);
             PaintBrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PaintBrushButton.Name = "PaintBrushButton";
             PaintBrushButton.Size = new System.Drawing.Size(32, 32);
@@ -238,7 +254,7 @@
             // 
             EraserButton.Cursor = System.Windows.Forms.Cursors.Hand;
             EraserButton.Image = Properties.Resources.Eraser;
-            EraserButton.Location = new System.Drawing.Point(44, 6);
+            EraserButton.Location = new System.Drawing.Point(44, 44);
             EraserButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             EraserButton.Name = "EraserButton";
             EraserButton.Size = new System.Drawing.Size(32, 32);
@@ -269,14 +285,13 @@
             ColorBox.Size = new System.Drawing.Size(56, 55);
             ColorBox.TabIndex = 1;
             ColorBox.TabStop = false;
-            ColorBox.BackColorChanged += ColorBox_BackColorChanged;
             ColorBox.Click += ColorBox_Click;
             // 
             // BucketButton
             // 
             BucketButton.Cursor = System.Windows.Forms.Cursors.Hand;
             BucketButton.Image = Properties.Resources.Bucket;
-            BucketButton.Location = new System.Drawing.Point(4, 44);
+            BucketButton.Location = new System.Drawing.Point(44, 158);
             BucketButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             BucketButton.Name = "BucketButton";
             BucketButton.Size = new System.Drawing.Size(32, 32);
@@ -319,6 +334,7 @@
             TopPanel.ResumeLayout(false);
             TopPanel.PerformLayout();
             ToolboxPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)PolygonButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)PencilButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)ColorPickerButton).EndInit();
@@ -354,6 +370,7 @@
         private System.Windows.Forms.PictureBox PencilButton;
         private System.Windows.Forms.PictureBox Pic;
         private System.Windows.Forms.PictureBox AnimegirlPictureBox;
+        private System.Windows.Forms.PictureBox PolygonButton;
     }
 }
 
