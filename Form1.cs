@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Drawing;
 using System;
+using Microsoft.VisualBasic.Devices;
 
 namespace Tinta {
     public partial class Form1 : Form {
@@ -19,13 +20,16 @@ namespace Tinta {
         private readonly Bitmap bitmap;
 
         Point mouseOffsetPos;
+
         bool drawBrushOutline = true;
         bool wasDrawingBrushOutline = true;
+
         bool isMouseDown = false;
         int pressedX, pressedY;
-        int x, y;
+        int mouseX, mouseY;
+
         bool drawingPolygon = false;
-        int PolygonX = 0, PolygonY = 0;
+        int PolygonX, PolygonY;
 
         public enum DrawingTool {
             Pencil,
@@ -74,19 +78,43 @@ namespace Tinta {
             if (isMouseDown) {
                 switch (selectedTool) {
                     case DrawingTool.Ellipse:
-                        g.DrawEllipse(pen, pressedX, pressedY, x - pressedX, y - pressedY);
+                        if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
+                            // Perfect circle and center at mouse
+                            int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY)) * 2;
+                            int x = pressedX - diameter / 2;
+                            int y = pressedY - diameter / 2;
+                            g.DrawEllipse(pen, x, y, diameter, diameter);
+                        }
+                        else if (ModifierKeys == Keys.Alt) {
+                            // Ellipse center at mouse
+                            int width = Math.Abs(mouseX - pressedX) * 2;
+                            int height = Math.Abs(mouseY - pressedY) * 2;
+                            int x = pressedX - width / 2;
+                            int y = pressedY - height / 2;
+                            g.DrawEllipse(pen, x, y, width, height);
+                        }
+                        else if (ModifierKeys == Keys.Shift) {
+                            // Perfect circle
+                            int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                            int x = pressedX + (mouseX > pressedX ? 0 : -diameter);
+                            int y = pressedY + (mouseY > pressedY ? 0 : -diameter);
+                            g.DrawEllipse(pen, x, y, diameter, diameter);
+                        }
+                        else {
+                            g.DrawEllipse(pen, pressedX, pressedY, mouseX - pressedX, mouseY - pressedY);
+                        }
                         break;
                     case DrawingTool.Rectangle:
-                        g.DrawRectangle(pen, Math.Min(pressedX, x), Math.Min(pressedY, y), Math.Abs(x - pressedX), Math.Abs(y - pressedY));
+                        g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
                         break;
                     case DrawingTool.Line:
-                        g.DrawLine(pen, pressedX, pressedY, x, y);
+                        g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
                         break;
                     case DrawingTool.Polygon:
                         if (drawingPolygon)
-                            g.DrawLine(pen, PolygonX, PolygonY, x, y);
+                            g.DrawLine(pen, PolygonX, PolygonY, mouseX, mouseY);
                         else
-                            g.DrawLine(pen, pressedX, pressedY, x, y);
+                            g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
                         break;
                     default:
                         break;
@@ -94,8 +122,8 @@ namespace Tinta {
             }
             if (drawBrushOutline) {
                 g.DrawEllipse(outlinePen,
-                                x - ((float)SizeSelector.Value / 2.0f),
-                                y - ((float)SizeSelector.Value / 2.0f),
+                                mouseX - ((float)SizeSelector.Value / 2.0f),
+                                mouseY - ((float)SizeSelector.Value / 2.0f),
                                 (float)SizeSelector.Value,
                                 (float)SizeSelector.Value);
             }
@@ -145,8 +173,8 @@ namespace Tinta {
                         last = current;
                         break;
                     case DrawingTool.ColorPicker:
-                        if (x < Pic.Width && x > 0 && y < Pic.Height && y > 0) {
-                            ColorBox.BackColor = bitmap.GetPixel(x, y);
+                        if (mouseX < Pic.Width && mouseX > 0 && mouseY < Pic.Height && mouseY > 0) {
+                            ColorBox.BackColor = bitmap.GetPixel(mouseX, mouseY);
                         }
                         break;
                     default:
@@ -154,8 +182,8 @@ namespace Tinta {
                 }
             }
 
-            x = e.X;
-            y = e.Y;
+            mouseX = e.X;
+            mouseY = e.Y;
 
             Pic.Refresh();
         }
@@ -164,10 +192,34 @@ namespace Tinta {
             isMouseDown = false;
             switch (selectedTool) {
                 case DrawingTool.Ellipse:
-                    g.DrawEllipse(pen, pressedX, pressedY, e.X - pressedX, e.Y - pressedY);
+                    if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
+                        // MAKE SO ITS A PRFECT CIRCLE EVERY TIME AND ITS CENTER IS WHERE I CLICKED
+                        int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY)) * 2;
+                        int x = pressedX - diameter / 2;
+                        int y = pressedY - diameter / 2;
+                        g.DrawEllipse(pen, x, y, diameter, diameter);
+                    }
+                    else if (ModifierKeys == Keys.Alt) {
+                        // --OK-- MAKE SO THE CIRCLE CENTER IS WHERE I CLICKED AND IT CAN GROW LIKE A NORMAL ELLIPSE
+                        int width = Math.Abs(mouseX - pressedX) * 2;
+                        int height = Math.Abs(mouseY - pressedY) * 2;
+                        int x = pressedX - width / 2;
+                        int y = pressedY - height / 2;
+                        g.DrawEllipse(pen, x, y, width, height);
+                    }
+                    else if (ModifierKeys == Keys.Shift) {
+                        // --OK-- MAKE SO ITS A PRFECT CIRCLE EVERY TIME
+                        int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                        int x = pressedX + (mouseX > pressedX ? 0 : -diameter);
+                        int y = pressedY + (mouseY > pressedY ? 0 : -diameter);
+                        g.DrawEllipse(pen, x, y, diameter, diameter);
+                    }
+                    else {
+                        g.DrawEllipse(pen, pressedX, pressedY, mouseX - pressedX, mouseY - pressedY);
+                    }
                     break;
                 case DrawingTool.Rectangle:
-                    g.DrawRectangle(pen, Math.Min(pressedX, x), Math.Min(pressedY, y), Math.Abs(x - pressedX), Math.Abs(y - pressedY));
+                    g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
                     break;
                 case DrawingTool.Line:
                     g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
@@ -184,8 +236,8 @@ namespace Tinta {
                     PolygonY = e.Y;
                     break;
                 case DrawingTool.ColorPicker:
-                    if (x < Pic.Width && x > 0 && y < Pic.Height && y > 0) {
-                        pen.Color = bitmap.GetPixel(x, y);
+                    if (mouseX < Pic.Width && mouseX > 0 && mouseY < Pic.Height && mouseY > 0) {
+                        pen.Color = bitmap.GetPixel(mouseX, mouseY);
                         selectedTool = DrawingTool.Paintbrush;
                         drawBrushOutline = true;
                         wasDrawingBrushOutline = drawBrushOutline;
@@ -199,7 +251,7 @@ namespace Tinta {
         private void Pic_MouseClick(object sender, EventArgs e) {
             switch (selectedTool) {
                 case DrawingTool.Bucket:
-                    FloodFill(bitmap, x, y, pen.Color);
+                    FloodFill(bitmap, mouseX, mouseY, pen.Color);
                     Pic.Refresh();
                     break;
                 default:
@@ -377,6 +429,7 @@ namespace Tinta {
                 case DrawingTool.Ellipse:
                 case DrawingTool.Rectangle:
                 case DrawingTool.Line:
+                case DrawingTool.Polygon:
                     pen.Width = (float)SizeSelector.Value;
                     break;
                 default:
