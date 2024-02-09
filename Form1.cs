@@ -7,10 +7,10 @@ using Microsoft.VisualBasic.Devices;
 
 namespace Tinta {
     public partial class Form1 : Form {
-        public Point last = new Point();
-        public Point current = new Point();
+        private Point last = new Point();
+        private Point current = new Point();
 
-        public Graphics g;
+        private Graphics g;
 
         static private Pen pen = new Pen(Color.Black, 1);
         static private Pen pencil = new Pen(Color.Black, 1);
@@ -40,7 +40,8 @@ namespace Tinta {
             Rectangle,
             Line,
             ColorPicker,
-            Polygon
+            Polygon,
+            Airbrush
         }
 
         static private DrawingTool selectedTool = DrawingTool.Paintbrush;
@@ -60,7 +61,6 @@ namespace Tinta {
             eraserPen.SetLineCap(System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.LineCap.Round,
                            System.Drawing.Drawing2D.DashCap.Round);
-
 
             bitmap = new Bitmap(Pic.Width, Pic.Height);
 
@@ -115,6 +115,25 @@ namespace Tinta {
                             g.DrawLine(pen, PolygonX, PolygonY, mouseX, mouseY);
                         else
                             g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
+                        break;
+                    case DrawingTool.Airbrush:
+                        Random rand = new Random();
+                        int airbrushDensity = 8;
+
+                        for (int i = 0; i < airbrushDensity; i++) {
+                            float angle = (float)(rand.NextDouble() * 2.0f * 3.14f);
+                            float radius = (float)(rand.NextDouble() * pen.Width);
+
+                            int offsetX = (int)(radius * Math.Cos(angle));
+                            int offsetY = (int)(radius * Math.Sin(angle));
+
+                            int airbrushX = mouseX + offsetX / 2;
+                            int airbrushY = mouseY + offsetY / 2;
+
+                            if (airbrushX >= 0 && airbrushX < bitmap.Width && airbrushY >= 0 && airbrushY < bitmap.Height) {
+                                bitmap.SetPixel(airbrushX, airbrushY, pen.Color);
+                            }
+                        }
                         break;
                     default:
                         break;
@@ -416,6 +435,15 @@ namespace Tinta {
             drawingPolygon = false;
         }
 
+        private void AirbrushButton_Click(object sender, EventArgs e) {
+            selectedTool = DrawingTool.Airbrush;
+            ColorBox.BackColor = pen.Color;
+            drawBrushOutline = true;
+            wasDrawingBrushOutline = drawBrushOutline;
+            SizeSelector.Value = (decimal)pen.Width;
+            SizeSelector.Enabled = true;
+        }
+
         private void SizeSelector_KeyUp(object sender, KeyEventArgs e) {
             SizeSelector_ValueChanged(sender, e);
         }
@@ -430,6 +458,7 @@ namespace Tinta {
                 case DrawingTool.Rectangle:
                 case DrawingTool.Line:
                 case DrawingTool.Polygon:
+                case DrawingTool.Airbrush:
                     pen.Width = (float)SizeSelector.Value;
                     break;
                 default:

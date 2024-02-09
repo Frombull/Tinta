@@ -43,6 +43,7 @@
             ColorBox = new System.Windows.Forms.PictureBox();
             BucketButton = new System.Windows.Forms.PictureBox();
             Pic = new System.Windows.Forms.PictureBox();
+            AirbrushButton = new System.Windows.Forms.PictureBox();
             TopPanel.SuspendLayout();
             ToolboxPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)PolygonButton).BeginInit();
@@ -58,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)ColorBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Pic).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)AirbrushButton).BeginInit();
             SuspendLayout();
             // 
             // TopPanel
@@ -129,6 +131,7 @@
             // ToolboxPanel
             // 
             ToolboxPanel.BackColor = System.Drawing.Color.Thistle;
+            ToolboxPanel.Controls.Add(AirbrushButton);
             ToolboxPanel.Controls.Add(PolygonButton);
             ToolboxPanel.Controls.Add(AnimegirlPictureBox);
             ToolboxPanel.Controls.Add(PencilButton);
@@ -319,6 +322,19 @@
             Pic.MouseMove += Pic_MouseMove;
             Pic.MouseUp += Pic_MouseUp;
             // 
+            // AirbrushButton
+            // 
+            AirbrushButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            AirbrushButton.Image = (System.Drawing.Image)resources.GetObject("AirbrushButton.Image");
+            AirbrushButton.Location = new System.Drawing.Point(4, 158);
+            AirbrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            AirbrushButton.Name = "AirbrushButton";
+            AirbrushButton.Size = new System.Drawing.Size(32, 32);
+            AirbrushButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            AirbrushButton.TabIndex = 8;
+            AirbrushButton.TabStop = false;
+            AirbrushButton.Click += AirbrushButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -347,6 +363,7 @@
             ((System.ComponentModel.ISupportInitialize)ColorBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)Pic).EndInit();
+            ((System.ComponentModel.ISupportInitialize)AirbrushButton).EndInit();
             ResumeLayout(false);
         }
 
@@ -371,6 +388,7 @@
         private System.Windows.Forms.PictureBox Pic;
         private System.Windows.Forms.PictureBox AnimegirlPictureBox;
         private System.Windows.Forms.PictureBox PolygonButton;
+        private System.Windows.Forms.PictureBox AirbrushButton;
     }
 }
 
