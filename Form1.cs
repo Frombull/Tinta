@@ -105,7 +105,31 @@ namespace Tinta {
                         }
                         break;
                     case DrawingTool.Rectangle:
-                        g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                        if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
+                            // Perfect square and center at mouse
+                            int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY)) * 2;
+                            int x = pressedX - diameter / 2;
+                            int y = pressedY - diameter / 2;
+                            g.DrawRectangle(pen, x, y, diameter, diameter);
+                        }
+                        else if (ModifierKeys == Keys.Alt) {
+                            // Rectangle center at mouse
+                            int width = Math.Abs(mouseX - pressedX) * 2;
+                            int height = Math.Abs(mouseY - pressedY) * 2;
+                            int x = pressedX - width / 2;
+                            int y = pressedY - height / 2;
+                            g.DrawRectangle(pen, x, y, width, height);
+                        }
+                        else if (ModifierKeys == Keys.Shift) {
+                            // Perfect square
+                            int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                            int x = pressedX + (mouseX > pressedX ? 0 : -diameter);
+                            int y = pressedY + (mouseY > pressedY ? 0 : -diameter);
+                            g.DrawRectangle(pen, x, y, diameter, diameter);
+                        }
+                        else {
+                            g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                        }
                         break;
                     case DrawingTool.Line:
                         g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
@@ -212,14 +236,14 @@ namespace Tinta {
             switch (selectedTool) {
                 case DrawingTool.Ellipse:
                     if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
-                        // MAKE SO ITS A PRFECT CIRCLE EVERY TIME AND ITS CENTER IS WHERE I CLICKED
+                        // Perfect circle and center at mouse
                         int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY)) * 2;
                         int x = pressedX - diameter / 2;
                         int y = pressedY - diameter / 2;
                         g.DrawEllipse(pen, x, y, diameter, diameter);
                     }
                     else if (ModifierKeys == Keys.Alt) {
-                        // --OK-- MAKE SO THE CIRCLE CENTER IS WHERE I CLICKED AND IT CAN GROW LIKE A NORMAL ELLIPSE
+                        // Ellipse center at mouse
                         int width = Math.Abs(mouseX - pressedX) * 2;
                         int height = Math.Abs(mouseY - pressedY) * 2;
                         int x = pressedX - width / 2;
@@ -227,7 +251,7 @@ namespace Tinta {
                         g.DrawEllipse(pen, x, y, width, height);
                     }
                     else if (ModifierKeys == Keys.Shift) {
-                        // --OK-- MAKE SO ITS A PRFECT CIRCLE EVERY TIME
+                        // Perfect circle
                         int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
                         int x = pressedX + (mouseX > pressedX ? 0 : -diameter);
                         int y = pressedY + (mouseY > pressedY ? 0 : -diameter);
@@ -238,7 +262,31 @@ namespace Tinta {
                     }
                     break;
                 case DrawingTool.Rectangle:
-                    g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                    if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
+                        // Perfect square and center at mouse
+                        int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY)) * 2;
+                        int x = pressedX - diameter / 2;
+                        int y = pressedY - diameter / 2;
+                        g.DrawRectangle(pen, x, y, diameter, diameter);
+                    }
+                    else if (ModifierKeys == Keys.Alt) {
+                        // Rectangle center at mouse
+                        int width = Math.Abs(mouseX - pressedX) * 2;
+                        int height = Math.Abs(mouseY - pressedY) * 2;
+                        int x = pressedX - width / 2;
+                        int y = pressedY - height / 2;
+                        g.DrawRectangle(pen, x, y, width, height);
+                    }
+                    else if (ModifierKeys == Keys.Shift) {
+                        // Perfect square
+                        int diameter = Math.Min(Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                        int x = pressedX + (mouseX > pressedX ? 0 : -diameter);
+                        int y = pressedY + (mouseY > pressedY ? 0 : -diameter);
+                        g.DrawRectangle(pen, x, y, diameter, diameter);
+                    }
+                    else {
+                        g.DrawRectangle(pen, Math.Min(pressedX, mouseX), Math.Min(pressedY, mouseY), Math.Abs(mouseX - pressedX), Math.Abs(mouseY - pressedY));
+                    }
                     break;
                 case DrawingTool.Line:
                     g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
