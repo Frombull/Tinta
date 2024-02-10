@@ -17,8 +17,9 @@ namespace Tinta {
         static private Pen outlinePen = new Pen(Color.Black, 1);
 
         private Bitmap bitmap;
-        private Stack<Bitmap> undoStack = new Stack<Bitmap>();
-        private Stack<Bitmap> redoStack = new Stack<Bitmap>();
+        private const int MaxHistoryCount = 20;
+        private List<Bitmap> undoList = new List<Bitmap>();
+        private List<Bitmap> redoList = new List<Bitmap>();
 
         Point mouseOffsetPos;
 
@@ -72,7 +73,6 @@ namespace Tinta {
 
             Pic.BackgroundImage = bitmap;
             Pic.MouseWheel += Pic_MouseWheel;
-            Pic.Invalidate();
             SaveToHistory();
         }
 
@@ -421,10 +421,23 @@ namespace Tinta {
 
         private void ClearButton_Click(object sender, EventArgs e) {
             var confirmResult = MessageBox.Show("Clear canvas?", "Maico-soft Tinta™",
-                                     MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                                MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
             if (confirmResult == DialogResult.Yes) {
                 g.Clear(Color.White);
+
+                // Dispose of Bitmaps in undoList
+                foreach (var bitmap in undoList) {
+                    bitmap.Dispose();
+                }
+                undoList.Clear();
+
+                // Dispose of Bitmaps in redoList
+                foreach (var bitmap in redoList) {
+                    bitmap.Dispose();
+                }
+                redoList.Clear();
+
                 Pic.Invalidate();
             }
         }
@@ -603,33 +616,75 @@ namespace Tinta {
 
         private void SaveToHistory() {
             if (bitmap != null) {
-                undoStack.Push(new Bitmap(bitmap));
-                redoStack.Clear();
+                if (undoList.Count < MaxHistoryCount) {
+                    undoList.Add(new Bitmap(bitmap));
+                }
+                else {
+                    // Remove oldest element and before adding
+                    undoList[0].Dispose();
+                    undoList.RemoveAt(0);
+                    undoList.Add(new Bitmap(bitmap));
+                }
+
+                // Dispose of Bitmaps in redoList
+                foreach (var bitmap in redoList) {
+                    bitmap.Dispose();
+                }
+                redoList.Clear();
             }
         }
 
         private void Undo() {
-            if (undoStack.Count > 1) {
-                redoStack.Push(new Bitmap(bitmap));
-                undoStack.Pop().Dispose();               // Dispose current state
-                bitmap = new Bitmap(undoStack.Peek());   // Load previous state
-                Pic.BackgroundImage = bitmap;
-                
-                Pic.Refresh();
+            if (undoList.Count > 1) {
+                // Add to redoList
+                if (redoList.Count < MaxHistoryCount) {
+                    redoList.Add(new Bitmap(undoList[undoList.Count - 1]));
+                }
+                else {
+                    // Remove oldest element and before adding
+                    redoList[0].Dispose();
+                    redoList.RemoveAt(0);
+                    redoList.Add(new Bitmap(undoList[undoList.Count - 1]));
+                }
 
+                Pic.BackgroundImage.Dispose();
+                bitmap = new Bitmap(undoList[undoList.Count - 2]);
+                Pic.BackgroundImage = bitmap;
+
+                g?.Dispose();
                 g = Graphics.FromImage(bitmap);
+
+                // Dispose
+                undoList[undoList.Count - 1].Dispose();
+                undoList.RemoveAt(undoList.Count - 1);
             }
         }
 
         private void Redo() {
-            if (redoStack.Count > 0) {
-                undoStack.Push(new Bitmap(redoStack.Pop()));    // Save a copy for undo
-                bitmap = new Bitmap(undoStack.Peek());          // Load the next state
-                Pic.BackgroundImage = bitmap;
-                
-                Pic.Refresh();
+            if (redoList.Count > 0) {
+                // Add to undoList
+                if (undoList.Count < MaxHistoryCount) {
+                    undoList.Add(new Bitmap(redoList[redoList.Count - 1]));
+                }
+                else {
+                    // Remove oldest element and before adding
+                    undoList[0].Dispose();
+                    undoList.RemoveAt(0);
+                    undoList.Add(new Bitmap(redoList[redoList.Count - 1]));
+                }
 
+                // Dispose current state
+                Pic.BackgroundImage.Dispose();
+                bitmap = new Bitmap(redoList[redoList.Count - 1]);
+                Pic.BackgroundImage = bitmap;
+
+
+                g?.Dispose();
                 g = Graphics.FromImage(bitmap);
+
+                // Dispose
+                redoList[redoList.Count - 1].Dispose();
+                redoList.RemoveAt(redoList.Count - 1);
             }
         }
 
