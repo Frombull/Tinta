@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Drawing;
 using System;
+using System.Linq;
 
 namespace Tinta {
     public partial class Form1 : Form {
@@ -631,6 +632,12 @@ namespace Tinta {
                     bitmap.Dispose();
                 }
                 redoList.Clear();
+
+                if (undoList.Count > 1) {
+                    UndoButton.Enabled = true;
+                }
+
+                UndoRedoUIButtons();
             }
         }
 
@@ -657,6 +664,8 @@ namespace Tinta {
                 // Dispose
                 undoList[undoList.Count - 1].Dispose();
                 undoList.RemoveAt(undoList.Count - 1);
+
+                UndoRedoUIButtons();
             }
         }
 
@@ -685,7 +694,14 @@ namespace Tinta {
                 // Dispose
                 redoList[redoList.Count - 1].Dispose();
                 redoList.RemoveAt(redoList.Count - 1);
+
+                UndoRedoUIButtons();
             }
+        }
+
+        private void UndoRedoUIButtons() {
+            UndoButton.Enabled = (undoList.Count > 1);
+            RedoButton.Enabled = (redoList.Count > 0);
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e) {
@@ -695,6 +711,15 @@ namespace Tinta {
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Z) {
                 Undo();
             }
+        }
+
+        private void UndoButton_Click(object sender, EventArgs e) {
+            Undo();
+        }
+
+        private void RedoButton_Click(object sender, EventArgs e) {
+            Redo();
+            
         }
     }
 }

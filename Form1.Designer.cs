@@ -25,7 +25,9 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             TopPanel = new System.Windows.Forms.Panel();
+            RedoButton = new System.Windows.Forms.Button();
             NameLabel = new System.Windows.Forms.Label();
+            UndoButton = new System.Windows.Forms.Button();
             ExitButton = new System.Windows.Forms.Button();
             ClearButton = new System.Windows.Forms.Button();
             SaveButton = new System.Windows.Forms.Button();
@@ -65,7 +67,9 @@
             // TopPanel
             // 
             TopPanel.BackColor = System.Drawing.Color.Indigo;
+            TopPanel.Controls.Add(RedoButton);
             TopPanel.Controls.Add(NameLabel);
+            TopPanel.Controls.Add(UndoButton);
             TopPanel.Controls.Add(ExitButton);
             TopPanel.Controls.Add(ClearButton);
             TopPanel.Controls.Add(SaveButton);
@@ -77,6 +81,23 @@
             TopPanel.TabIndex = 0;
             TopPanel.MouseDown += TopPanel_MouseDown;
             TopPanel.MouseMove += TopPanel_MouseMove;
+            // 
+            // RedoButton
+            // 
+            RedoButton.BackColor = System.Drawing.Color.Indigo;
+            RedoButton.BackgroundImage = (System.Drawing.Image)resources.GetObject("RedoButton.BackgroundImage");
+            RedoButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            RedoButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            RedoButton.FlatAppearance.BorderSize = 0;
+            RedoButton.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Indigo;
+            RedoButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            RedoButton.ForeColor = System.Drawing.Color.Transparent;
+            RedoButton.Location = new System.Drawing.Point(166, 1);
+            RedoButton.Name = "RedoButton";
+            RedoButton.Size = new System.Drawing.Size(28, 28);
+            RedoButton.TabIndex = 6;
+            RedoButton.UseVisualStyleBackColor = false;
+            RedoButton.Click += RedoButton_Click;
             // 
             // NameLabel
             // 
@@ -93,6 +114,22 @@
             NameLabel.TabIndex = 2;
             NameLabel.Text = "Maico-soft Tinta™";
             NameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // UndoButton
+            // 
+            UndoButton.BackColor = System.Drawing.Color.Indigo;
+            UndoButton.BackgroundImage = (System.Drawing.Image)resources.GetObject("UndoButton.BackgroundImage");
+            UndoButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            UndoButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            UndoButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Indigo;
+            UndoButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            UndoButton.ForeColor = System.Drawing.Color.Transparent;
+            UndoButton.Location = new System.Drawing.Point(128, 1);
+            UndoButton.Name = "UndoButton";
+            UndoButton.Size = new System.Drawing.Size(28, 28);
+            UndoButton.TabIndex = 6;
+            UndoButton.UseVisualStyleBackColor = false;
+            UndoButton.Click += UndoButton_Click;
             // 
             // ExitButton
             // 
@@ -390,6 +427,8 @@
         private System.Windows.Forms.PictureBox PolygonButton;
         private System.Windows.Forms.PictureBox AirbrushButton;
         private System.Windows.Forms.PictureBox Pic;
+        private System.Windows.Forms.Button UndoButton;
+        private System.Windows.Forms.Button RedoButton;
     }
 }
 
