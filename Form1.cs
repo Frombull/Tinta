@@ -239,7 +239,7 @@ namespace Tinta {
                         break;
                     case DrawingTool.ColorPicker:
                         if (mouseX < Pic.Width && mouseX > 0 && mouseY < Pic.Height && mouseY > 0) {
-                            ColorBox.BackColor = bitmap.GetPixel(mouseX, mouseY);
+                            ColorBoxPrimary.BackColor = bitmap.GetPixel(mouseX, mouseY);
                         }
                         break;
                     default:
@@ -461,7 +461,7 @@ namespace Tinta {
 
         private void PaintBrushButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Paintbrush;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             SizeSelector.Value = (decimal)pen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = true;
@@ -470,7 +470,7 @@ namespace Tinta {
 
         private void EraserButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Eraser;
-            ColorBox.BackColor = eraserPen.Color;
+            ColorBoxPrimary.BackColor = eraserPen.Color;
             SizeSelector.Value = (decimal)eraserPen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = true;
@@ -479,7 +479,7 @@ namespace Tinta {
 
         private void BucketButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Bucket;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             SizeSelector.Value = (decimal)pen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = false;
@@ -488,7 +488,7 @@ namespace Tinta {
 
         private void EllipseButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Ellipse;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             SizeSelector.Value = (decimal)pen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = true;
@@ -497,7 +497,7 @@ namespace Tinta {
 
         private void RectangleButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Rectangle;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             SizeSelector.Value = (decimal)pen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = true;
@@ -506,7 +506,7 @@ namespace Tinta {
 
         private void LineButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Line;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             SizeSelector.Value = (decimal)pen.Width;
             SizeSelector.Enabled = true;
             drawBrushOutline = true;
@@ -521,7 +521,7 @@ namespace Tinta {
 
         private void PencilButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Pencil;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             drawBrushOutline = false;
             wasDrawingBrushOutline = drawBrushOutline;
             SizeSelector.Value = (decimal)pencil.Width;
@@ -530,7 +530,7 @@ namespace Tinta {
 
         private void PolygonButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Polygon;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
             SizeSelector.Value = (decimal)pen.Width;
@@ -540,7 +540,7 @@ namespace Tinta {
 
         private void AirbrushButton_Click(object sender, EventArgs e) {
             selectedTool = DrawingTool.Airbrush;
-            ColorBox.BackColor = pen.Color;
+            ColorBoxPrimary.BackColor = pen.Color;
             drawBrushOutline = true;
             wasDrawingBrushOutline = drawBrushOutline;
             SizeSelector.Value = (decimal)pen.Width;
@@ -576,8 +576,8 @@ namespace Tinta {
             ColorDialog cd = new();
             if (cd.ShowDialog() == DialogResult.OK) {
                 pen.Color = cd.Color;
-                pencil.Color = cd.Color;
-                ColorBox.BackColor = cd.Color;
+                pencil.Color = pen.Color;    //TODO: Remove and use pen color
+                ColorBoxPrimary.BackColor = cd.Color;
             }
         }
 
@@ -710,6 +710,15 @@ namespace Tinta {
             }
             else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Z) {
                 Undo();
+            }
+            else if (e.KeyCode == Keys.X) {
+                // Swap colors
+                Color bufferColor = ColorBoxPrimary.BackColor;
+                ColorBoxPrimary.BackColor = ColorBoxSecondary.BackColor;
+                ColorBoxSecondary.BackColor = bufferColor;
+
+                pen.Color = ColorBoxPrimary.BackColor;
+                pencil.Color = pen.Color;
             }
         }
 

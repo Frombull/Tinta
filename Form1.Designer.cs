@@ -32,6 +32,7 @@
             ClearButton = new System.Windows.Forms.Button();
             SaveButton = new System.Windows.Forms.Button();
             ToolboxPanel = new System.Windows.Forms.Panel();
+            ColorBoxSecondary = new System.Windows.Forms.PictureBox();
             AirbrushButton = new System.Windows.Forms.PictureBox();
             PolygonButton = new System.Windows.Forms.PictureBox();
             AnimegirlPictureBox = new System.Windows.Forms.PictureBox();
@@ -43,11 +44,12 @@
             EllipseButton = new System.Windows.Forms.PictureBox();
             EraserButton = new System.Windows.Forms.PictureBox();
             SizeSelector = new System.Windows.Forms.NumericUpDown();
-            ColorBox = new System.Windows.Forms.PictureBox();
+            ColorBoxPrimary = new System.Windows.Forms.PictureBox();
             BucketButton = new System.Windows.Forms.PictureBox();
             Pic = new System.Windows.Forms.PictureBox();
             TopPanel.SuspendLayout();
             ToolboxPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ColorBoxSecondary).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AirbrushButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PolygonButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).BeginInit();
@@ -59,7 +61,7 @@
             ((System.ComponentModel.ISupportInitialize)EllipseButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)EraserButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)SizeSelector).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)ColorBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ColorBoxPrimary).BeginInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Pic).BeginInit();
             SuspendLayout();
@@ -168,6 +170,7 @@
             // ToolboxPanel
             // 
             ToolboxPanel.BackColor = System.Drawing.Color.Thistle;
+            ToolboxPanel.Controls.Add(ColorBoxSecondary);
             ToolboxPanel.Controls.Add(AirbrushButton);
             ToolboxPanel.Controls.Add(PolygonButton);
             ToolboxPanel.Controls.Add(AnimegirlPictureBox);
@@ -179,7 +182,7 @@
             ToolboxPanel.Controls.Add(EllipseButton);
             ToolboxPanel.Controls.Add(EraserButton);
             ToolboxPanel.Controls.Add(SizeSelector);
-            ToolboxPanel.Controls.Add(ColorBox);
+            ToolboxPanel.Controls.Add(ColorBoxPrimary);
             ToolboxPanel.Controls.Add(BucketButton);
             ToolboxPanel.Dock = System.Windows.Forms.DockStyle.Left;
             ToolboxPanel.Location = new System.Drawing.Point(0, 31);
@@ -187,6 +190,17 @@
             ToolboxPanel.Name = "ToolboxPanel";
             ToolboxPanel.Size = new System.Drawing.Size(80, 488);
             ToolboxPanel.TabIndex = 0;
+            // 
+            // ColorBoxSecondary
+            // 
+            ColorBoxSecondary.BackColor = System.Drawing.Color.White;
+            ColorBoxSecondary.Cursor = System.Windows.Forms.Cursors.Hand;
+            ColorBoxSecondary.Location = new System.Drawing.Point(35, 442);
+            ColorBoxSecondary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ColorBoxSecondary.Name = "ColorBoxSecondary";
+            ColorBoxSecondary.Size = new System.Drawing.Size(34, 34);
+            ColorBoxSecondary.TabIndex = 9;
+            ColorBoxSecondary.TabStop = false;
             // 
             // AirbrushButton
             // 
@@ -328,17 +342,17 @@
             SizeSelector.ValueChanged += SizeSelector_ValueChanged;
             SizeSelector.KeyUp += SizeSelector_KeyUp;
             // 
-            // ColorBox
+            // ColorBoxPrimary
             // 
-            ColorBox.BackColor = System.Drawing.Color.Black;
-            ColorBox.Cursor = System.Windows.Forms.Cursors.Hand;
-            ColorBox.Location = new System.Drawing.Point(13, 421);
-            ColorBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            ColorBox.Name = "ColorBox";
-            ColorBox.Size = new System.Drawing.Size(56, 55);
-            ColorBox.TabIndex = 1;
-            ColorBox.TabStop = false;
-            ColorBox.Click += ColorBox_Click;
+            ColorBoxPrimary.BackColor = System.Drawing.Color.Black;
+            ColorBoxPrimary.Cursor = System.Windows.Forms.Cursors.Hand;
+            ColorBoxPrimary.Location = new System.Drawing.Point(13, 421);
+            ColorBoxPrimary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ColorBoxPrimary.Name = "ColorBoxPrimary";
+            ColorBoxPrimary.Size = new System.Drawing.Size(34, 34);
+            ColorBoxPrimary.TabIndex = 1;
+            ColorBoxPrimary.TabStop = false;
+            ColorBoxPrimary.Click += ColorBox_Click;
             // 
             // BucketButton
             // 
@@ -388,6 +402,7 @@
             TopPanel.ResumeLayout(false);
             TopPanel.PerformLayout();
             ToolboxPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)ColorBoxSecondary).EndInit();
             ((System.ComponentModel.ISupportInitialize)AirbrushButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)PolygonButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).EndInit();
@@ -399,7 +414,7 @@
             ((System.ComponentModel.ISupportInitialize)EllipseButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)EraserButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)SizeSelector).EndInit();
-            ((System.ComponentModel.ISupportInitialize)ColorBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ColorBoxPrimary).EndInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)Pic).EndInit();
             ResumeLayout(false);
@@ -415,7 +430,7 @@
         private System.Windows.Forms.PictureBox PaintBrushButton;
         private System.Windows.Forms.PictureBox LineButton;
         private System.Windows.Forms.PictureBox EraserButton;
-        private System.Windows.Forms.PictureBox ColorBox;
+        private System.Windows.Forms.PictureBox ColorBoxPrimary;
         private System.Windows.Forms.PictureBox BucketButton;
         private System.Windows.Forms.PictureBox EllipseButton;
         private System.Windows.Forms.PictureBox RectangleButton;
@@ -429,6 +444,7 @@
         private System.Windows.Forms.PictureBox Pic;
         private System.Windows.Forms.Button UndoButton;
         private System.Windows.Forms.Button RedoButton;
+        private System.Windows.Forms.PictureBox ColorBoxSecondary;
     }
 }
 
