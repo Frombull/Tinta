@@ -25,11 +25,12 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             TopPanel = new System.Windows.Forms.Panel();
-            BiaLabel = new System.Windows.Forms.Label();
+            NameLabel = new System.Windows.Forms.Label();
             ExitButton = new System.Windows.Forms.Button();
             ClearButton = new System.Windows.Forms.Button();
             SaveButton = new System.Windows.Forms.Button();
             ToolboxPanel = new System.Windows.Forms.Panel();
+            AirbrushButton = new System.Windows.Forms.PictureBox();
             PolygonButton = new System.Windows.Forms.PictureBox();
             AnimegirlPictureBox = new System.Windows.Forms.PictureBox();
             PencilButton = new System.Windows.Forms.PictureBox();
@@ -43,9 +44,9 @@
             ColorBox = new System.Windows.Forms.PictureBox();
             BucketButton = new System.Windows.Forms.PictureBox();
             Pic = new System.Windows.Forms.PictureBox();
-            AirbrushButton = new System.Windows.Forms.PictureBox();
             TopPanel.SuspendLayout();
             ToolboxPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)AirbrushButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PolygonButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)PencilButton).BeginInit();
@@ -59,13 +60,12 @@
             ((System.ComponentModel.ISupportInitialize)ColorBox).BeginInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).BeginInit();
             ((System.ComponentModel.ISupportInitialize)Pic).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)AirbrushButton).BeginInit();
             SuspendLayout();
             // 
             // TopPanel
             // 
             TopPanel.BackColor = System.Drawing.Color.Indigo;
-            TopPanel.Controls.Add(BiaLabel);
+            TopPanel.Controls.Add(NameLabel);
             TopPanel.Controls.Add(ExitButton);
             TopPanel.Controls.Add(ClearButton);
             TopPanel.Controls.Add(SaveButton);
@@ -78,21 +78,21 @@
             TopPanel.MouseDown += TopPanel_MouseDown;
             TopPanel.MouseMove += TopPanel_MouseMove;
             // 
-            // BiaLabel
+            // NameLabel
             // 
-            BiaLabel.AutoSize = true;
-            BiaLabel.BackColor = System.Drawing.Color.Transparent;
-            BiaLabel.Enabled = false;
-            BiaLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            BiaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, 0);
-            BiaLabel.ForeColor = System.Drawing.Color.White;
-            BiaLabel.Location = new System.Drawing.Point(4, 7);
-            BiaLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            BiaLabel.Name = "BiaLabel";
-            BiaLabel.Size = new System.Drawing.Size(111, 16);
-            BiaLabel.TabIndex = 2;
-            BiaLabel.Text = "Maico-soft Tinta™";
-            BiaLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            NameLabel.AutoSize = true;
+            NameLabel.BackColor = System.Drawing.Color.Transparent;
+            NameLabel.Enabled = false;
+            NameLabel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            NameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, 0);
+            NameLabel.ForeColor = System.Drawing.Color.White;
+            NameLabel.Location = new System.Drawing.Point(4, 7);
+            NameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            NameLabel.Name = "NameLabel";
+            NameLabel.Size = new System.Drawing.Size(111, 16);
+            NameLabel.TabIndex = 2;
+            NameLabel.Text = "Maico-soft Tinta™";
+            NameLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // ExitButton
             // 
@@ -150,6 +150,19 @@
             ToolboxPanel.Name = "ToolboxPanel";
             ToolboxPanel.Size = new System.Drawing.Size(80, 488);
             ToolboxPanel.TabIndex = 0;
+            // 
+            // AirbrushButton
+            // 
+            AirbrushButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            AirbrushButton.Image = (System.Drawing.Image)resources.GetObject("AirbrushButton.Image");
+            AirbrushButton.Location = new System.Drawing.Point(4, 158);
+            AirbrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            AirbrushButton.Name = "AirbrushButton";
+            AirbrushButton.Size = new System.Drawing.Size(32, 32);
+            AirbrushButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            AirbrushButton.TabIndex = 8;
+            AirbrushButton.TabStop = false;
+            AirbrushButton.Click += AirbrushButton_Click;
             // 
             // PolygonButton
             // 
@@ -322,19 +335,6 @@
             Pic.MouseMove += Pic_MouseMove;
             Pic.MouseUp += Pic_MouseUp;
             // 
-            // AirbrushButton
-            // 
-            AirbrushButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            AirbrushButton.Image = (System.Drawing.Image)resources.GetObject("AirbrushButton.Image");
-            AirbrushButton.Location = new System.Drawing.Point(4, 158);
-            AirbrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            AirbrushButton.Name = "AirbrushButton";
-            AirbrushButton.Size = new System.Drawing.Size(32, 32);
-            AirbrushButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            AirbrushButton.TabIndex = 8;
-            AirbrushButton.TabStop = false;
-            AirbrushButton.Click += AirbrushButton_Click;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -347,9 +347,11 @@
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "Form1";
             Text = "Form1";
+            KeyDown += Form1_KeyDown;
             TopPanel.ResumeLayout(false);
             TopPanel.PerformLayout();
             ToolboxPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)AirbrushButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)PolygonButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)AnimegirlPictureBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)PencilButton).EndInit();
@@ -363,7 +365,6 @@
             ((System.ComponentModel.ISupportInitialize)ColorBox).EndInit();
             ((System.ComponentModel.ISupportInitialize)BucketButton).EndInit();
             ((System.ComponentModel.ISupportInitialize)Pic).EndInit();
-            ((System.ComponentModel.ISupportInitialize)AirbrushButton).EndInit();
             ResumeLayout(false);
         }
 
@@ -373,7 +374,7 @@
         private System.Windows.Forms.Button SaveButton;
         private System.Windows.Forms.Button ExitButton;
         private System.Windows.Forms.Button ClearButton;
-        private System.Windows.Forms.Label BiaLabel;
+        private System.Windows.Forms.Label NameLabel;
         private System.Windows.Forms.PictureBox PaintBrushButton;
         private System.Windows.Forms.PictureBox LineButton;
         private System.Windows.Forms.PictureBox EraserButton;
@@ -385,10 +386,10 @@
         private System.Windows.Forms.Panel ToolboxPanel;
         private System.Windows.Forms.PictureBox ColorPickerButton;
         private System.Windows.Forms.PictureBox PencilButton;
-        private System.Windows.Forms.PictureBox Pic;
         private System.Windows.Forms.PictureBox AnimegirlPictureBox;
         private System.Windows.Forms.PictureBox PolygonButton;
         private System.Windows.Forms.PictureBox AirbrushButton;
+        private System.Windows.Forms.PictureBox Pic;
     }
 }
 

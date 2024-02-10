@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Drawing;
 using System;
-using Microsoft.VisualBasic.Devices;
 
 namespace Tinta {
     public partial class Form1 : Form {
@@ -17,7 +16,9 @@ namespace Tinta {
         static private Pen eraserPen = new Pen(Color.White, 1);
         static private Pen outlinePen = new Pen(Color.Black, 1);
 
-        private readonly Bitmap bitmap;
+        private Bitmap bitmap;
+        private Stack<Bitmap> undoStack = new Stack<Bitmap>();
+        private Stack<Bitmap> redoStack = new Stack<Bitmap>();
 
         Point mouseOffsetPos;
 
@@ -49,6 +50,8 @@ namespace Tinta {
         public Form1() {
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.UserPaint, true);
             InitializeComponent();
+            this.KeyPreview = true;
+
             g = Pic.CreateGraphics();
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
@@ -70,6 +73,7 @@ namespace Tinta {
             Pic.BackgroundImage = bitmap;
             Pic.MouseWheel += Pic_MouseWheel;
             Pic.Invalidate();
+            SaveToHistory();
         }
 
         private void Pic_Paint(object sender, PaintEventArgs p) {
@@ -132,7 +136,24 @@ namespace Tinta {
                         }
                         break;
                     case DrawingTool.Line:
-                        g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
+                        int deltaX = mouseX - pressedX;
+                        int deltaY = mouseY - pressedY;
+
+                        if (ModifierKeys == Keys.Shift) {
+                            // Calculate angle and snap to nearest cardinal direction
+                            double angle = Math.Atan2(deltaY, deltaX);
+                            double snappedAngle = Math.Round(angle / (Math.PI / 4)) * (Math.PI / 4);
+
+                            // Calculate coordinates based on snapped angle
+                            int length = (int)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                            int snappedX = pressedX + (int)(length * Math.Cos(snappedAngle));
+                            int snappedY = pressedY + (int)(length * Math.Sin(snappedAngle));
+
+                            g.DrawLine(pen, pressedX, pressedY, snappedX, snappedY);
+                        }
+                        else {
+                            g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
+                        }
                         break;
                     case DrawingTool.Polygon:
                         if (drawingPolygon)
@@ -233,6 +254,7 @@ namespace Tinta {
 
         private void Pic_MouseUp(object sender, MouseEventArgs e) {
             isMouseDown = false;
+
             switch (selectedTool) {
                 case DrawingTool.Ellipse:
                     if (ModifierKeys == (Keys.Shift | Keys.Alt)) {
@@ -289,7 +311,24 @@ namespace Tinta {
                     }
                     break;
                 case DrawingTool.Line:
-                    g.DrawLine(pen, pressedX, pressedY, e.X, e.Y);
+                    int deltaX = mouseX - pressedX;
+                    int deltaY = mouseY - pressedY;
+
+                    if (ModifierKeys == Keys.Shift) {
+                        // Calculate angle and snap to nearest cardinal direction
+                        double angle = Math.Atan2(deltaY, deltaX);
+                        double snappedAngle = Math.Round(angle / (Math.PI / 4)) * (Math.PI / 4);
+
+                        // Calculate coordinates based on snapped angle
+                        int length = (int)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                        int snappedX = pressedX + (int)(length * Math.Cos(snappedAngle));
+                        int snappedY = pressedY + (int)(length * Math.Sin(snappedAngle));
+
+                        g.DrawLine(pen, pressedX, pressedY, snappedX, snappedY);
+                    }
+                    else {
+                        g.DrawLine(pen, pressedX, pressedY, mouseX, mouseY);
+                    }
                     break;
                 case DrawingTool.Polygon:
                     if (drawingPolygon) {
@@ -313,6 +352,8 @@ namespace Tinta {
                 default:
                     break;
             }
+
+            SaveToHistory();
         }
 
         private void Pic_MouseClick(object sender, EventArgs e) {
@@ -558,6 +599,47 @@ namespace Tinta {
 
             pixels.Enqueue(new Point(x, y));
             bitmap.SetPixel(x, y, newColor);
+        }
+
+        private void SaveToHistory() {
+            if (bitmap != null) {
+                undoStack.Push(new Bitmap(bitmap));
+                redoStack.Clear();
+            }
+        }
+
+        private void Undo() {
+            if (undoStack.Count > 1) {
+                redoStack.Push(new Bitmap(bitmap));
+                undoStack.Pop().Dispose();               // Dispose current state
+                bitmap = new Bitmap(undoStack.Peek());   // Load previous state
+                Pic.BackgroundImage = bitmap;
+                
+                Pic.Refresh();
+
+                g = Graphics.FromImage(bitmap);
+            }
+        }
+
+        private void Redo() {
+            if (redoStack.Count > 0) {
+                undoStack.Push(new Bitmap(redoStack.Pop()));    // Save a copy for undo
+                bitmap = new Bitmap(undoStack.Peek());          // Load the next state
+                Pic.BackgroundImage = bitmap;
+                
+                Pic.Refresh();
+
+                g = Graphics.FromImage(bitmap);
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Modifiers == (Keys.Control | Keys.Shift) && e.KeyCode == Keys.Z) {
+                Redo();
+            }
+            else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Z) {
+                Undo();
+            }
         }
     }
 }
