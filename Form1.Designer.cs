@@ -209,7 +209,7 @@
             AirbrushButton.Location = new System.Drawing.Point(4, 158);
             AirbrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             AirbrushButton.Name = "AirbrushButton";
-            AirbrushButton.Size = new System.Drawing.Size(32, 32);
+            AirbrushButton.Size = new System.Drawing.Size(34, 34);
             AirbrushButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             AirbrushButton.TabIndex = 8;
             AirbrushButton.TabStop = false;
@@ -219,10 +219,10 @@
             // 
             PolygonButton.Cursor = System.Windows.Forms.Cursors.Hand;
             PolygonButton.Image = (System.Drawing.Image)resources.GetObject("PolygonButton.Image");
-            PolygonButton.Location = new System.Drawing.Point(44, 120);
+            PolygonButton.Location = new System.Drawing.Point(42, 120);
             PolygonButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PolygonButton.Name = "PolygonButton";
-            PolygonButton.Size = new System.Drawing.Size(32, 32);
+            PolygonButton.Size = new System.Drawing.Size(34, 34);
             PolygonButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             PolygonButton.TabIndex = 7;
             PolygonButton.TabStop = false;
@@ -246,7 +246,7 @@
             PencilButton.Location = new System.Drawing.Point(4, 6);
             PencilButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PencilButton.Name = "PencilButton";
-            PencilButton.Size = new System.Drawing.Size(32, 32);
+            PencilButton.Size = new System.Drawing.Size(34, 34);
             PencilButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             PencilButton.TabIndex = 5;
             PencilButton.TabStop = false;
@@ -259,7 +259,7 @@
             ColorPickerButton.Location = new System.Drawing.Point(4, 44);
             ColorPickerButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             ColorPickerButton.Name = "ColorPickerButton";
-            ColorPickerButton.Size = new System.Drawing.Size(32, 32);
+            ColorPickerButton.Size = new System.Drawing.Size(34, 34);
             ColorPickerButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             ColorPickerButton.TabIndex = 4;
             ColorPickerButton.TabStop = false;
@@ -268,11 +268,11 @@
             // PaintBrushButton
             // 
             PaintBrushButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            PaintBrushButton.Image = Properties.Resources.Brush;
-            PaintBrushButton.Location = new System.Drawing.Point(44, 6);
+            PaintBrushButton.Image = (System.Drawing.Image)resources.GetObject("PaintBrushButton.Image");
+            PaintBrushButton.Location = new System.Drawing.Point(42, 6);
             PaintBrushButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             PaintBrushButton.Name = "PaintBrushButton";
-            PaintBrushButton.Size = new System.Drawing.Size(32, 32);
+            PaintBrushButton.Size = new System.Drawing.Size(34, 34);
             PaintBrushButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             PaintBrushButton.TabIndex = 1;
             PaintBrushButton.TabStop = false;
@@ -282,10 +282,10 @@
             // 
             RectangleButton.Cursor = System.Windows.Forms.Cursors.Hand;
             RectangleButton.Image = Properties.Resources.Rectangle;
-            RectangleButton.Location = new System.Drawing.Point(44, 82);
+            RectangleButton.Location = new System.Drawing.Point(42, 82);
             RectangleButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             RectangleButton.Name = "RectangleButton";
-            RectangleButton.Size = new System.Drawing.Size(32, 32);
+            RectangleButton.Size = new System.Drawing.Size(34, 34);
             RectangleButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             RectangleButton.TabIndex = 3;
             RectangleButton.TabStop = false;
@@ -298,7 +298,7 @@
             LineButton.Location = new System.Drawing.Point(4, 120);
             LineButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             LineButton.Name = "LineButton";
-            LineButton.Size = new System.Drawing.Size(32, 32);
+            LineButton.Size = new System.Drawing.Size(34, 34);
             LineButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             LineButton.TabIndex = 1;
             LineButton.TabStop = false;
@@ -311,7 +311,7 @@
             EllipseButton.Location = new System.Drawing.Point(4, 82);
             EllipseButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             EllipseButton.Name = "EllipseButton";
-            EllipseButton.Size = new System.Drawing.Size(32, 32);
+            EllipseButton.Size = new System.Drawing.Size(34, 34);
             EllipseButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             EllipseButton.TabIndex = 2;
             EllipseButton.TabStop = false;
@@ -321,10 +321,10 @@
             // 
             EraserButton.Cursor = System.Windows.Forms.Cursors.Hand;
             EraserButton.Image = Properties.Resources.Eraser;
-            EraserButton.Location = new System.Drawing.Point(44, 44);
+            EraserButton.Location = new System.Drawing.Point(42, 44);
             EraserButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             EraserButton.Name = "EraserButton";
-            EraserButton.Size = new System.Drawing.Size(32, 32);
+            EraserButton.Size = new System.Drawing.Size(34, 34);
             EraserButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             EraserButton.TabIndex = 1;
             EraserButton.TabStop = false;
@@ -358,10 +358,10 @@
             // 
             BucketButton.Cursor = System.Windows.Forms.Cursors.Hand;
             BucketButton.Image = Properties.Resources.Bucket;
-            BucketButton.Location = new System.Drawing.Point(44, 158);
+            BucketButton.Location = new System.Drawing.Point(42, 158);
             BucketButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             BucketButton.Name = "BucketButton";
-            BucketButton.Size = new System.Drawing.Size(32, 32);
+            BucketButton.Size = new System.Drawing.Size(34, 34);
             BucketButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             BucketButton.TabIndex = 1;
             BucketButton.TabStop = false;

@@ -3,7 +3,6 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Drawing;
 using System;
-using System.Linq;
 
 namespace Tinta {
     public partial class Form1 : Form {
@@ -70,6 +69,9 @@ namespace Tinta {
             bitmap = new Bitmap(Pic.Width, Pic.Height);
 
             g = Graphics.FromImage(bitmap);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.None;
+
             g.Clear(Color.White);
 
             Pic.BackgroundImage = bitmap;
@@ -728,7 +730,10 @@ namespace Tinta {
 
         private void RedoButton_Click(object sender, EventArgs e) {
             Redo();
-            
+        }
+
+        private void ZoomButton_Click(object sender, EventArgs e) {
+            //TODO
         }
     }
 }
